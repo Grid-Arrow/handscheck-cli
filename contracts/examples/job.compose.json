@@ -1,0 +1,56 @@
+{
+  "contract_version": 1,
+  "job_id": "01JC0EXAMPLE0000000000JOB4",
+  "task_id": "14",
+  "kind": "compose",
+  "options": {
+    "use_claude": true,
+    "claude_budget_usd": 0.25,
+    "baseline_review": true,
+    "verify": false
+  },
+  "compose": {
+    "messages": [
+      {
+        "alert_id": "7",
+        "kind": "alert",
+        "organization": "Grid Arrow",
+        "unverified": false,
+        "findings": [
+          {
+            "finding_id": "41",
+            "dedupe_key": "system:uid0_account:lab-wp2:-:sysbackup",
+            "host": "lab-wp2",
+            "agent": "system",
+            "site": null,
+            "severity": "critical",
+            "title": "Second uid-0 account sysbackup",
+            "summary": "An account with uid 0 besides root.",
+            "evidence": [
+              "sysbackup:x:0:0::/home/sysbackup:/bin/bash"
+            ],
+            "recommended_action": "Lock the account and find out who created it.",
+            "status": "new",
+            "first_seen_at": "2026-11-13T02:01:00Z",
+            "last_seen_at": "2026-11-13T02:01:00Z",
+            "verification": {
+              "status": "confirmed",
+              "reason": "/etc/passwd has a second uid 0 account.",
+              "checked": [
+                "grep -n :0:0: /etc/passwd"
+              ],
+              "verifier_version": 2,
+              "at": "2026-11-13T02:05:40Z"
+            },
+            "triage": {
+              "severity": "critical",
+              "action": "alert",
+              "reason": "A hidden root account is a root-level backdoor."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "deadline": "2026-11-13T08:00:00Z"
+}

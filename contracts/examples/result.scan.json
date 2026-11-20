@@ -1,0 +1,109 @@
+{
+  "contract_version": 1,
+  "job_id": "01JC0EXAMPLE0000000000JOB1",
+  "worker_version": "0.1.0",
+  "status": "ok",
+  "started_at": "2026-11-14T02:00:03Z",
+  "finished_at": "2026-11-14T02:04:41Z",
+  "snapshots": [
+    {
+      "agent": "sites",
+      "agent_version": 1,
+      "site": null,
+      "facts": {
+        "sites": [
+          {
+            "name": "alpha.lab.test",
+            "aliases": [
+              "www.alpha.lab.test"
+            ],
+            "docroot": "/var/www/alpha.lab.test",
+            "server": "apache",
+            "config": "/etc/apache2/sites-enabled/alpha.conf",
+            "listen": [
+              "*:80"
+            ],
+            "type": "wordpress",
+            "wordpress": null
+          }
+        ]
+      }
+    },
+    {
+      "agent": "system",
+      "agent_version": 2,
+      "site": null,
+      "facts": {
+        "os": "Ubuntu 24.04.1 LTS",
+        "kernel": "6.8.0-48-generic",
+        "uid0_users": [
+          "root"
+        ]
+      }
+    }
+  ],
+  "change_events": [
+    {
+      "kind": "reboot",
+      "agent": "system",
+      "site": null,
+      "summary": "Host rebooted since the last scan",
+      "detail": {
+        "previous_boot": "2026-11-01T08:12:00Z",
+        "boot": "2026-11-13T22:40:00Z"
+      },
+      "observed_at": "2026-11-14T02:00:05Z"
+    }
+  ],
+  "findings": [
+    {
+      "dedupe_key": "malware:php_in_uploads:lab-wp1:alpha.lab.test:wp-content/uploads/2026/10/x.php",
+      "agent": "malware",
+      "agent_version": 1,
+      "site": "alpha.lab.test",
+      "severity": "high",
+      "title": "PHP file in uploads",
+      "summary": "A PHP file appeared in wp-content/uploads; its birth time is newer than its mtime.",
+      "evidence": [
+        "-rw-r--r-- www-data www-data 1840 wp-content/uploads/2026/10/x.php"
+      ],
+      "rule_ids": [
+        "malware.php_in_uploads"
+      ],
+      "recommended_action": "Quarantine the file and deny PHP execution in uploads.",
+      "confidence": "high",
+      "verification": {
+        "status": "confirmed",
+        "reason": "The file exists and runs eval on POST input.",
+        "verifier_version": 2
+      }
+    }
+  ],
+  "metrics": [
+    {
+      "name": "scan_seconds",
+      "value": 278.0,
+      "site": null,
+      "unit": "s"
+    }
+  ],
+  "errors": [],
+  "claude_input_tokens": 18234,
+  "claude_output_tokens": 1120,
+  "reviews": [
+    {
+      "agent": "system",
+      "site": null,
+      "mode": "changes",
+      "error": null
+    },
+    {
+      "agent": "malware",
+      "site": "alpha.lab.test",
+      "mode": "baseline",
+      "error": null
+    }
+  ],
+  "host_key_fingerprint": "SHA256:EXAMPLEexampleEXAMPLEexampleEXAMPLEexample0",
+  "claude_cost_usd": 0.42
+}

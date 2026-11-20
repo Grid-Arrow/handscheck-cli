@@ -1,0 +1,25 @@
+# Lab target host: Ubuntu 24.04, Apache + PHP-FPM 8.3, WordPress + wp-cli, sshd.
+# Synthetic, for local development only. Never expose it beyond 127.0.0.1.
+FROM curlimages/curl:8.11.1 AS downloads
+ARG WP_VERSION=6.7.2
+ARG WP_CLI_VERSION=2.11.0
+RUN curl -fsSL -o /tmp/wordpress.tar.gz "https://wordpress.org/wordpress-${WP_VERSION}.tar.gz" \
+    && curl -fsSL -o /tmp/wp-cli.phar \
+       "https://github.com/wp-cli/wp-cli/releases/download/v${WP_CLI_VERSION}/wp-cli-${WP_CLI_VERSION}.phar"
+
+FROM ubuntu:24.04
+ENV DEBIAN_FRONTEND=noninteractive PHP_VERSION=8.3
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       openssh-server sudo apache2 php8.3-fpm php8.3-mysql php8.3-xml php8.3-curl php8.3-gd php8.3-mbstring \
+       php8.3-zip php8.3-intl mysql-client cron procps iproute2 less ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && a2enmod proxy_fcgi setenvif rewrite && a2enconf php8.3-fpm && a2dissite 000-default
+
+COPY --from=downloads /tmp/wordpress.tar.gz /opt/wordpress.tar.gz
+COPY --from=downloads --chmod=755 /tmp/wp-cli.phar /usr/local/bin/wp
+COPY common/ /opt/lab/
+RUN /opt/lab/setup-image.sh
+
+EXPOSE 22 80
+ENTRYPOINT ["/opt/lab/entrypoint.sh"]

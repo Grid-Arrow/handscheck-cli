@@ -1,0 +1,13 @@
+# Example rule file. The rule set itself ships in the handscheck release bundle as data; this source repository
+# has the format and one synthetic example per file, so the loader, the rule tests and your own rules work.
+# Rule format: id, description, severity, the matcher fields below, references, and examples it must match and
+# must not match (tests/agents/test_rules.py runs them).
+# Shell patterns on the lowercased login and email; examples are "<login> <email>".
+rules:
+  - id: example.wp.account.backdoor-admin
+    description: Example only. An administrator named like a throwaway backdoor account.
+    severity: high
+    login: ["backdoor_*"]
+    examples:
+      match: ["backdoor_1 x@example.test"]
+      no_match: ["backdoorman y@example.test", "admin admin@example.test"]

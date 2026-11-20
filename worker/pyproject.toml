@@ -1,0 +1,75 @@
+[project]
+name = "handscheck"
+version = "0.1.0"
+description = "handscheck.ai scanning engine and hc CLI"
+readme = "README.md"
+license = "FSL-1.1-ALv2"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "typer>=0.12",
+    "rich>=13.7",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "asyncssh>=2.17",
+    "httpx>=0.27",
+    "pyyaml>=6.0",
+    "anthropic>=1.0",
+]
+
+[project.scripts]
+hc = "handscheck.cli:app"
+handscheck = "handscheck.cli:app"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "types-pyyaml>=6.0",
+]
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/handscheck"]
+# Written by the Deploy workflow (git-ignored): the release commit, reported in the worker's version.
+artifacts = ["src/handscheck/_release.py"]
+
+# Shared rules (worker/rules/) ship inside the package; agents find them via rules.shared_rules_dir().
+[tool.hatch.build.targets.wheel.force-include]
+"rules" = "handscheck/_shared_rules"
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "RUF", "ASYNC"]
+# ASYNC109: a per-command `timeout` argument is the runner's API (it is also enforced on the host).
+# RUF005: command argv lists read better as concatenations ([...] + [...]) than unpacked.
+ignore = ["ASYNC109", "RUF005"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S108"]  # tests use /tmp paths as refused examples
+# Facts are pydantic models (via a base class ruff can't see through): pydantic copies mutable defaults.
+"src/handscheck/{agents,sites}/**" = ["RUF012"]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+plugins = ["pydantic.mypy"]
+files = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "lab: checks against the Docker lab hosts",
+    "agents: agent evals against lab fixtures (calls Claude; costs money)",
+    "canary: full pipeline against canary hosts",
+]
+addopts = "-m 'not lab and not agents and not canary'"

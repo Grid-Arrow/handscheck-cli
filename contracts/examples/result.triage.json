@@ -1,0 +1,29 @@
+{
+  "contract_version": 1,
+  "job_id": "01JC0EXAMPLE0000000000JOB3",
+  "worker_version": "0.1.0",
+  "status": "ok",
+  "started_at": "2026-11-13T02:06:00Z",
+  "finished_at": "2026-11-13T02:06:12Z",
+  "triage": [
+    {
+      "finding_id": "41",
+      "severity": "critical",
+      "action": "alert",
+      "reason": "A hidden root account is a root-level backdoor.",
+      "related": [
+        "users:new_account:lab-wp1:-:sysbackup"
+      ],
+      "follow_ups": [
+        {
+          "kind": "investigate",
+          "question": "When and from where was sysbackup created? Check auth.log and lastlog around 2026-11-13 02:00.",
+          "reason": "Shows how the attacker got root."
+        }
+      ]
+    }
+  ],
+  "claude_input_tokens": 3100,
+  "claude_output_tokens": 420,
+  "claude_cost_usd": 0.0208
+}

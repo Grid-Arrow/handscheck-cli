@@ -1,0 +1,22 @@
+{
+  "contract_version": 1,
+  "job_id": "01JC0EXAMPLE0000000000JOB2",
+  "worker_version": "0.1.0",
+  "status": "ok",
+  "started_at": "2026-11-13T02:05:00Z",
+  "finished_at": "2026-11-13T02:05:40Z",
+  "verdicts": [
+    {
+      "finding_id": "41",
+      "status": "confirmed",
+      "reason": "/etc/passwd has a second uid 0 account not created by a package.",
+      "checked": [
+        "grep -n :0:0: /etc/passwd"
+      ],
+      "verifier_version": 2
+    }
+  ],
+  "claude_input_tokens": 8200,
+  "claude_output_tokens": 640,
+  "claude_cost_usd": 0.0456
+}

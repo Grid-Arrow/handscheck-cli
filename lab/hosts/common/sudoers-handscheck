@@ -1,0 +1,11 @@
+# Read-only sudo for the handscheck scan user (lab copy of what we ask customers to install).
+# This is a coarse layer: commands like cat and find can still read any file, and find has write options.
+# The real guard is the worker's SSH command policy (worker/src/handscheck/ssh/policy.py).
+# Paths are listed with and without /usr because 24.04 is usr-merged and 16.04 is not.
+Cmnd_Alias HC_READ = /bin/cat, /usr/bin/cat, /usr/bin/stat, /bin/stat, /bin/ls, /usr/bin/ls, \
+                     /usr/bin/find, /bin/grep, /usr/bin/grep, /usr/bin/head, /usr/bin/tail, \
+                     /usr/bin/dpkg, /bin/ss, /usr/bin/ss, /bin/journalctl, /usr/bin/journalctl, \
+                     /usr/bin/lastlog, /usr/bin/last, /usr/bin/crontab -l *, /usr/bin/getent, \
+                     /usr/bin/md5sum
+handscheck ALL=(root) NOPASSWD: HC_READ
+handscheck ALL=(www-data) NOPASSWD: /usr/local/bin/wp

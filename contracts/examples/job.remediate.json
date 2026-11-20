@@ -1,0 +1,69 @@
+{
+  "contract_version": 1,
+  "job_id": "01JCX7Q4R2M8E0RZ3V9T5K6A1B",
+  "task_id": "412",
+  "kind": "remediate",
+  "host": {
+    "host_id": "2",
+    "name": "lab-wp2",
+    "address": "lab-wp2",
+    "port": 22,
+    "user": "handscheck-fix",
+    "private_key": "-----BEGIN OPENSSH PRIVATE KEY-----\nREDACTED-EXAMPLE\n-----END OPENSSH PRIVATE KEY-----\n",
+    "host_key_fingerprint": "SHA256:Zm9vYmFyYmF6cXV4ZXhhbXBsZWZpbmdlcnByaW50"
+  },
+  "options": {
+    "use_claude": false,
+    "claude_budget_usd": 0,
+    "baseline_review": false,
+    "verify": false
+  },
+  "remediate": {
+    "proposal_id": "17",
+    "mode": "apply",
+    "fix": {
+      "action": "disable_indexes",
+      "action_version": 1,
+      "params": {
+        "site": "gamma.lab.test",
+        "root": "/var/www/gamma.lab.test",
+        "dir": "/wp-content/uploads/leads/",
+        "listings": [
+          "/wp-content/uploads/leads/"
+        ]
+      },
+      "summary": "Stop gamma.lab.test from showing file lists for /wp-content/uploads/leads/ (and folders below it) by adding `Options -Indexes` to /var/www/gamma.lab.test/wp-content/uploads/leads/.htaccess.",
+      "risk": "low",
+      "commands": [
+        "sudo -n -- test -d /var/www/gamma.lab.test/wp-content/uploads/leads",
+        "sudo -n -- test -f /var/www/gamma.lab.test/wp-content/uploads/leads/.htaccess",
+        "sudo -n -- cp -p /var/www/gamma.lab.test/wp-content/uploads/leads/.htaccess /var/www/gamma.lab.test/wp-content/uploads/leads/.htaccess.handscheck-backup",
+        "sudo -n -- tee /var/www/gamma.lab.test/wp-content/uploads/leads/.htaccess",
+        "sudo -n -- mv -f /var/www/gamma.lab.test/wp-content/uploads/leads/.htaccess.handscheck-backup /var/www/gamma.lab.test/wp-content/uploads/leads/.htaccess",
+        "sudo -n -- install -d -m 700 '/var/lib/handscheck-quarantine/<fix id>'",
+        "sudo -n -- mv /var/www/gamma.lab.test/wp-content/uploads/leads/.htaccess '/var/lib/handscheck-quarantine/<fix id>/.htaccess'"
+      ],
+      "rollback": [
+        "Restore the previous .htaccess from /var/www/gamma.lab.test/wp-content/uploads/leads/.htaccess.handscheck-backup, or move the new one to /var/lib/handscheck-quarantine/<fix id>/."
+      ],
+      "verify": [
+        "Request /wp-content/uploads/leads/ on gamma.lab.test: it must no longer show a file list."
+      ],
+      "notes": [
+        "Works on Apache with AllowOverride allowing Options; otherwise verification fails and the fix is rolled back automatically.",
+        "An existing .htaccess is kept: it is backed up and the line is added at the end."
+      ],
+      "plan_sha256": "03d49606e63b90a0dcda0a885183662c679ddec9ba2fb0446f17e8dd11de8f1b"
+    },
+    "approval": {
+      "user": "owner@example.test",
+      "approved_at": "2026-11-19T15:04:05Z"
+    },
+    "sites": [
+      "gamma.lab.test",
+      "alpha.lab.test"
+    ],
+    "rollback_data": null
+  },
+  "deadline": "2026-11-19T21:04:05Z"
+}

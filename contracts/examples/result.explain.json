@@ -1,0 +1,18 @@
+{
+  "contract_version": 1,
+  "job_id": "01JC0EXAMPLE0000000000JOB6",
+  "worker_version": "0.1.0",
+  "status": "ok",
+  "started_at": "2026-11-13T02:31:00Z",
+  "finished_at": "2026-11-13T02:31:08Z",
+  "messages": [
+    {
+      "alert_id": "16",
+      "subject": "Worker nyc3-1 silent for 20 min; 3 scans waiting (+1 more)",
+      "body": "The only worker, nyc3-1, last checked in at 02:10 UTC, so 3 scans are waiting and no servers are being watched.\n\nFirst check: is the droplet up and is `hc worker` running under systemd?"
+    }
+  ],
+  "claude_input_tokens": 1500,
+  "claude_output_tokens": 220,
+  "claude_cost_usd": 0.0104
+}

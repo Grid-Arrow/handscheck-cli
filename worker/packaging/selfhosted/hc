@@ -1,0 +1,5 @@
+#!/bin/sh
+# hc, self-hosted bundle: runs handscheck with the bundled Python in isolated mode (-I: ignores PYTHON* variables,
+# the user's site-packages and the current directory).
+here=$(dirname "$(readlink -f "$0")")
+exec "$here/../python/bin/python3" -I -m handscheck "$@"

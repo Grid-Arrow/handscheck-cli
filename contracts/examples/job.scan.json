@@ -1,0 +1,66 @@
+{
+  "contract_version": 1,
+  "job_id": "01JC0EXAMPLE0000000000JOB1",
+  "task_id": "01JC0EXAMPLE000000000TASK1",
+  "kind": "scan",
+  "host": {
+    "host_id": "3",
+    "name": "lab-wp1",
+    "address": "lab-wp1",
+    "port": 22,
+    "user": "handscheck",
+    "private_key": "EXAMPLE-NOT-A-REAL-KEY",
+    "host_key_fingerprint": "SHA256:EXAMPLEexampleEXAMPLEexampleEXAMPLEexample0"
+  },
+  "agents": [
+    {
+      "name": "system",
+      "version": 3,
+      "site": null,
+      "settings": {},
+      "use_claude": true
+    },
+    {
+      "name": "malware",
+      "version": 4,
+      "site": null,
+      "settings": {
+        "max_file_kb": 2048
+      },
+      "use_claude": true
+    }
+  ],
+  "previous_snapshots": {
+    "system": {
+      "agent_version": 2,
+      "facts": {
+        "os": "Ubuntu 24.04.1 LTS",
+        "uid0_users": [
+          "root"
+        ]
+      },
+      "taken_at": "2026-11-13T02:00:41Z"
+    }
+  },
+  "disabled_sites": [
+    "staging.alpha.lab.test"
+  ],
+  "open_findings": [
+    {
+      "dedupe_key": "exposure:xmlrpc_enabled:lab-wp1:alpha.lab.test:/xmlrpc.php",
+      "agent": "exposure",
+      "site": "alpha.lab.test",
+      "title": "XML-RPC is enabled",
+      "severity": "medium",
+      "status": "open"
+    }
+  ],
+  "options": {
+    "use_claude": true,
+    "claude_budget_usd": 5.0,
+    "baseline_review": true,
+    "verify": false
+  },
+  "suppressions": [],
+  "deadline": "2026-11-14T03:00:00Z"
+}

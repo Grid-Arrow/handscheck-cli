@@ -1,0 +1,22 @@
+# /etc/sudoers.d/handscheck: read-only sudo for the handscheck self-hosted CLI (installed by install.sh).
+#
+# `hc check --local` runs as the `handscheck` user, which has no password, no SSH keys and no login shell; only
+# root can start it (`sudo -u handscheck hc check --local`). Some checks must read files only root can read
+# (crontabs, sudoers, other users' authorized_keys, site code, logs), so this grants exactly the commands they
+# run with sudo, and nothing that writes:
+#   cat, head, tail, grep, stat, ls, md5sum, find   read files and list directories (any file: that is the job)
+#   dpkg --verify                                   compare installed system files with the package database
+#   wp db query (as www-data)                       fixed read-only SELECTs on WordPress users and sessions
+# find's actions that run programs or write files (-exec, -execdir, -ok, -okdir, -delete, -fprint*, -fls) are
+# excluded. hc itself also refuses every command that is not on its read-only allowlist before sudo ever sees it
+# (worker/src/handscheck/ssh/policy.py in the source).
+Cmnd_Alias HC_READ = /bin/cat, /usr/bin/cat, /usr/bin/head, /usr/bin/tail, /bin/grep, /usr/bin/grep, \
+                     /usr/bin/stat, /bin/stat, /bin/ls, /usr/bin/ls, /usr/bin/md5sum, /usr/bin/find, \
+                     /usr/bin/dpkg --verify *
+Cmnd_Alias HC_FIND_WRITES = /usr/bin/find -exec*, /usr/bin/find * -exec*, /usr/bin/find -ok*, \
+                            /usr/bin/find * -ok*, /usr/bin/find -delete*, /usr/bin/find * -delete*, \
+                            /usr/bin/find -fprint*, /usr/bin/find * -fprint*, /usr/bin/find -fls*, \
+                            /usr/bin/find * -fls*
+Cmnd_Alias HC_WP = /usr/local/bin/wp db query *, /usr/bin/wp db query *
+handscheck ALL=(root) NOPASSWD: HC_READ, !HC_FIND_WRITES
+handscheck ALL=(www-data) NOPASSWD: HC_WP

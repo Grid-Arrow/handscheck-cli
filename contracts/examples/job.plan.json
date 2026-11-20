@@ -1,0 +1,43 @@
+{
+  "contract_version": 1,
+  "job_id": "01JC0EXAMPLE0000000000JOBP",
+  "task_id": "32",
+  "kind": "plan",
+  "options": {
+    "use_claude": true,
+    "claude_budget_usd": 0.05,
+    "baseline_review": true,
+    "verify": false
+  },
+  "plan": {
+    "host": "lab-wp2",
+    "signals": ["open critical finding: Second uid-0 account sysbackup", "1 package change since the last scan"],
+    "agents": [
+      {"name": "system", "scope": "host", "settings": {}},
+      {"name": "malware", "scope": "site", "settings": {}}
+    ],
+    "sites": ["delta.lab.test", "gamma.lab.test"],
+    "open_findings": [
+      {
+        "dedupe_key": "system:uid0_account:lab-wp2:-:sysbackup",
+        "agent": "system",
+        "site": null,
+        "title": "Second uid-0 account sysbackup",
+        "severity": "critical",
+        "status": "new"
+      }
+    ],
+    "change_events": [
+      {
+        "kind": "package",
+        "agent": "system",
+        "site": null,
+        "summary": "Installed: netcat-traditional 1.10-41",
+        "observed_at": "2026-11-19T22:00:00Z"
+      }
+    ],
+    "profile": "Ubuntu 16.04 with Apache and PHP 7.0 FPM; two WordPress sites.",
+    "max_deep": 3
+  },
+  "deadline": "2026-11-20T12:00:00Z"
+}

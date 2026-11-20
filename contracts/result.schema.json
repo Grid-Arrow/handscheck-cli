@@ -1,0 +1,1063 @@
+{
+  "$defs": {
+    "AgentReview": {
+      "additionalProperties": false,
+      "description": "One Claude review in the run. After a `baseline` review without error, open findings of that agent and\nsite that were not reported again are resolved by the control plane.",
+      "properties": {
+        "agent": {
+          "title": "Agent",
+          "type": "string"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error"
+        },
+        "mode": {
+          "description": "baseline, deep (the planner's full review; doesn't resolve absent findings), changes or skipped",
+          "title": "Mode",
+          "type": "string"
+        },
+        "site": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site"
+        }
+      },
+      "required": [
+        "agent",
+        "mode"
+      ],
+      "title": "AgentReview",
+      "type": "object"
+    },
+    "ChangeEvent": {
+      "additionalProperties": false,
+      "description": "Operator changes (reboot, package install, config edit, new site): not findings by default.",
+      "properties": {
+        "agent": {
+          "title": "Agent",
+          "type": "string"
+        },
+        "detail": {
+          "additionalProperties": true,
+          "title": "Detail",
+          "type": "object"
+        },
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "site": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "agent",
+        "summary",
+        "observed_at"
+      ],
+      "title": "ChangeEvent",
+      "type": "object"
+    },
+    "ComposedMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_id": {
+          "title": "Alert Id",
+          "type": "string"
+        },
+        "body": {
+          "description": "Plain text (light Markdown), used for email and Slack.",
+          "maxLength": 8000,
+          "title": "Body",
+          "type": "string"
+        },
+        "subject": {
+          "maxLength": 200,
+          "title": "Subject",
+          "type": "string"
+        }
+      },
+      "required": [
+        "alert_id",
+        "subject",
+        "body"
+      ],
+      "title": "ComposedMessage",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "properties": {
+        "agent": {
+          "title": "Agent",
+          "type": "string"
+        },
+        "agent_version": {
+          "title": "Agent Version",
+          "type": "integer"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "dedupe_key": {
+          "description": "Stable key, e.g. malware:php_in_uploads:<host>:<site>:<path>.",
+          "title": "Dedupe Key",
+          "type": "string"
+        },
+        "evidence": {
+          "description": "Redacted evidence lines or S3 object refs.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "fix": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FixProposal"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A fix to propose once the finding is confirmed."
+        },
+        "recommended_action": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recommended Action"
+        },
+        "rule_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Rule Ids",
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "site": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "supersedes": {
+          "description": "Dedupe keys of open findings this one replaces (same agent and site); the control plane resolves them, e.g. per-folder listing findings folded into one for the site.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Supersedes",
+          "type": "array"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "verification": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FindingVerification"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "dedupe_key",
+        "agent",
+        "agent_version",
+        "severity",
+        "title",
+        "summary"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "FindingVerification": {
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "status": {
+          "description": "pending, confirmed, rejected, needs_more, not_required or error",
+          "title": "Status",
+          "type": "string"
+        },
+        "verifier_version": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Verifier Version"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "FindingVerification",
+      "type": "object"
+    },
+    "FixProposal": {
+      "additionalProperties": false,
+      "description": "A fix the worker can apply after a person approves it (M6). Built by code from an action template\nand its parameters; Claude never writes commands. The approval pins `plan_sha256` (action, version,\nparams).",
+      "properties": {
+        "action": {
+          "description": "Action template, e.g. disable_indexes, neutralize_wp_admin.",
+          "title": "Action",
+          "type": "string"
+        },
+        "action_version": {
+          "minimum": 1,
+          "title": "Action Version",
+          "type": "integer"
+        },
+        "commands": {
+          "description": "Every command the fix may run on the host (preview).",
+          "items": {
+            "type": "string"
+          },
+          "title": "Commands",
+          "type": "array"
+        },
+        "notes": {
+          "description": "Limits, e.g. what rollback can't restore.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        },
+        "params": {
+          "additionalProperties": true,
+          "title": "Params",
+          "type": "object"
+        },
+        "plan_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Plan Sha256",
+          "type": "string"
+        },
+        "risk": {
+          "description": "low, medium or high",
+          "title": "Risk",
+          "type": "string"
+        },
+        "rollback": {
+          "description": "What undoing it runs (preview).",
+          "items": {
+            "type": "string"
+          },
+          "title": "Rollback",
+          "type": "array"
+        },
+        "summary": {
+          "description": "What the fix does, in one or two sentences.",
+          "maxLength": 500,
+          "title": "Summary",
+          "type": "string"
+        },
+        "verify": {
+          "description": "How the result is checked afterwards.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Verify",
+          "type": "array"
+        }
+      },
+      "required": [
+        "action",
+        "action_version",
+        "params",
+        "summary",
+        "risk",
+        "commands",
+        "plan_sha256"
+      ],
+      "title": "FixProposal",
+      "type": "object"
+    },
+    "FollowUp": {
+      "additionalProperties": false,
+      "description": "A follow-up task triage asks for. The control plane enforces depth, budget and no repeats.",
+      "properties": {
+        "kind": {
+          "description": "investigate",
+          "title": "Kind",
+          "type": "string"
+        },
+        "question": {
+          "maxLength": 2000,
+          "title": "Question",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 500,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "question",
+        "reason"
+      ],
+      "title": "FollowUp",
+      "type": "object"
+    },
+    "Investigation": {
+      "additionalProperties": false,
+      "properties": {
+        "answer": {
+          "title": "Answer",
+          "type": "string"
+        }
+      },
+      "required": [
+        "answer"
+      ],
+      "title": "Investigation",
+      "type": "object"
+    },
+    "Metric": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "site": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "title": "Metric",
+      "type": "object"
+    },
+    "PlanItem": {
+      "additionalProperties": false,
+      "properties": {
+        "agent": {
+          "title": "Agent",
+          "type": "string"
+        },
+        "depth": {
+          "description": "normal or deep (deep = Claude reviews all facts)",
+          "title": "Depth",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 500,
+          "title": "Reason",
+          "type": "string"
+        },
+        "settings": {
+          "additionalProperties": true,
+          "description": "Overrides for this run only.",
+          "title": "Settings",
+          "type": "object"
+        },
+        "site": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site"
+        }
+      },
+      "required": [
+        "agent",
+        "depth",
+        "reason"
+      ],
+      "title": "PlanItem",
+      "type": "object"
+    },
+    "ReconOutput": {
+      "additionalProperties": false,
+      "description": "What recon found and proposes. Every change was validated against the agent's settings schema.",
+      "properties": {
+        "changes": {
+          "items": {
+            "$ref": "#/$defs/SettingChange"
+          },
+          "title": "Changes",
+          "type": "array"
+        },
+        "inventory": {
+          "additionalProperties": true,
+          "description": "What the read-only inventory saw.",
+          "title": "Inventory",
+          "type": "object"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Claude model used; null = code only.",
+          "title": "Model"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        },
+        "profile": {
+          "description": "A short description of the host.",
+          "maxLength": 2000,
+          "title": "Profile",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile"
+      ],
+      "title": "ReconOutput",
+      "type": "object"
+    },
+    "RemediationOutcome": {
+      "additionalProperties": false,
+      "properties": {
+        "baseline_after": {
+          "items": {
+            "$ref": "#/$defs/SiteStatus"
+          },
+          "title": "Baseline After",
+          "type": "array"
+        },
+        "baseline_before": {
+          "items": {
+            "$ref": "#/$defs/SiteStatus"
+          },
+          "title": "Baseline Before",
+          "type": "array"
+        },
+        "message": {
+          "maxLength": 2000,
+          "title": "Message",
+          "type": "string"
+        },
+        "problems": {
+          "description": "What verification found wrong.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Problems",
+          "type": "array"
+        },
+        "rollback_data": {
+          "additionalProperties": true,
+          "description": "Kept for a later rollback.",
+          "title": "Rollback Data",
+          "type": "object"
+        },
+        "status": {
+          "description": "succeeded, failed, stale, rolled_back or refused",
+          "title": "Status",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/RemediationStep"
+          },
+          "title": "Steps",
+          "type": "array"
+        }
+      },
+      "required": [
+        "status",
+        "message"
+      ],
+      "title": "RemediationOutcome",
+      "type": "object"
+    },
+    "RemediationStep": {
+      "additionalProperties": false,
+      "properties": {
+        "command": {
+          "title": "Command",
+          "type": "string"
+        },
+        "duration_s": {
+          "default": 0.0,
+          "title": "Duration S",
+          "type": "number"
+        },
+        "exit_status": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exit Status"
+        },
+        "output_sha256": {
+          "title": "Output Sha256",
+          "type": "string"
+        },
+        "phase": {
+          "description": "precheck, apply, verify or rollback",
+          "title": "Phase",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phase",
+        "command",
+        "output_sha256"
+      ],
+      "title": "RemediationStep",
+      "type": "object"
+    },
+    "ResultStatus": {
+      "enum": [
+        "ok",
+        "partial",
+        "failed"
+      ],
+      "title": "ResultStatus",
+      "type": "string"
+    },
+    "RunPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/PlanItem"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "summary": {
+          "maxLength": 1000,
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "summary"
+      ],
+      "title": "RunPlan",
+      "type": "object"
+    },
+    "SettingChange": {
+      "additionalProperties": false,
+      "description": "A per-host agent setting change: turn an agent on or off, and/or override some of its settings.",
+      "properties": {
+        "agent": {
+          "title": "Agent",
+          "type": "string"
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "null = leave as is.",
+          "title": "Enabled"
+        },
+        "reason": {
+          "maxLength": 500,
+          "title": "Reason",
+          "type": "string"
+        },
+        "settings": {
+          "additionalProperties": true,
+          "description": "Overrides, valid for the agent.",
+          "title": "Settings",
+          "type": "object"
+        }
+      },
+      "required": [
+        "agent",
+        "reason"
+      ],
+      "title": "SettingChange",
+      "type": "object"
+    },
+    "Severity": {
+      "enum": [
+        "info",
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "SiteStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error"
+        },
+        "site": {
+          "title": "Site",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        }
+      },
+      "required": [
+        "site"
+      ],
+      "title": "SiteStatus",
+      "type": "object"
+    },
+    "Snapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "agent": {
+          "title": "Agent",
+          "type": "string"
+        },
+        "agent_version": {
+          "title": "Agent Version",
+          "type": "integer"
+        },
+        "facts": {
+          "additionalProperties": true,
+          "title": "Facts",
+          "type": "object"
+        },
+        "site": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site"
+        }
+      },
+      "required": [
+        "agent",
+        "agent_version",
+        "facts"
+      ],
+      "title": "Snapshot",
+      "type": "object"
+    },
+    "TriageDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "description": "alert (now), digest (daily) or none (reports only)",
+          "title": "Action",
+          "type": "string"
+        },
+        "finding_id": {
+          "title": "Finding Id",
+          "type": "string"
+        },
+        "follow_ups": {
+          "items": {
+            "$ref": "#/$defs/FollowUp"
+          },
+          "title": "Follow Ups",
+          "type": "array"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "related": {
+          "description": "dedupe_keys of related findings.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Related",
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity",
+          "description": "Final severity."
+        }
+      },
+      "required": [
+        "finding_id",
+        "severity",
+        "action",
+        "reason"
+      ],
+      "title": "TriageDecision",
+      "type": "object"
+    },
+    "VerifyVerdict": {
+      "additionalProperties": false,
+      "description": "The verifier's answer for one finding of a verify job.",
+      "properties": {
+        "checked": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Checked",
+          "type": "array"
+        },
+        "finding_id": {
+          "title": "Finding Id",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "status": {
+          "description": "confirmed, rejected, needs_more or error",
+          "title": "Status",
+          "type": "string"
+        },
+        "verifier_version": {
+          "title": "Verifier Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "finding_id",
+        "status",
+        "reason",
+        "verifier_version"
+      ],
+      "title": "VerifyVerdict",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "change_events": {
+      "items": {
+        "$ref": "#/$defs/ChangeEvent"
+      },
+      "title": "Change Events",
+      "type": "array"
+    },
+    "claude_cost_usd": {
+      "default": 0.0,
+      "title": "Claude Cost Usd",
+      "type": "number"
+    },
+    "claude_input_tokens": {
+      "default": 0,
+      "title": "Claude Input Tokens",
+      "type": "integer"
+    },
+    "claude_output_tokens": {
+      "default": 0,
+      "title": "Claude Output Tokens",
+      "type": "integer"
+    },
+    "contract_version": {
+      "default": 1,
+      "title": "Contract Version",
+      "type": "integer"
+    },
+    "errors": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+    },
+    "findings": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Findings",
+      "type": "array"
+    },
+    "finished_at": {
+      "format": "date-time",
+      "title": "Finished At",
+      "type": "string"
+    },
+    "host_key_fingerprint": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "The host key seen on this run (SHA256:...), pinned on the first scan.",
+      "title": "Host Key Fingerprint"
+    },
+    "investigation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Investigation"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "investigate jobs"
+    },
+    "job_id": {
+      "title": "Job Id",
+      "type": "string"
+    },
+    "messages": {
+      "description": "compose jobs (alert_id = the alert) and explain jobs (alert_id = the message_id)",
+      "items": {
+        "$ref": "#/$defs/ComposedMessage"
+      },
+      "title": "Messages",
+      "type": "array"
+    },
+    "metrics": {
+      "items": {
+        "$ref": "#/$defs/Metric"
+      },
+      "title": "Metrics",
+      "type": "array"
+    },
+    "plan": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RunPlan"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "plan jobs"
+    },
+    "recon": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReconOutput"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "recon jobs"
+    },
+    "remediation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RemediationOutcome"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "remediate jobs"
+    },
+    "reviews": {
+      "items": {
+        "$ref": "#/$defs/AgentReview"
+      },
+      "title": "Reviews",
+      "type": "array"
+    },
+    "snapshots": {
+      "items": {
+        "$ref": "#/$defs/Snapshot"
+      },
+      "title": "Snapshots",
+      "type": "array"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/ResultStatus"
+    },
+    "triage": {
+      "description": "triage jobs",
+      "items": {
+        "$ref": "#/$defs/TriageDecision"
+      },
+      "title": "Triage",
+      "type": "array"
+    },
+    "verdicts": {
+      "description": "verify jobs",
+      "items": {
+        "$ref": "#/$defs/VerifyVerdict"
+      },
+      "title": "Verdicts",
+      "type": "array"
+    },
+    "worker_version": {
+      "title": "Worker Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "job_id",
+    "worker_version",
+    "status",
+    "started_at",
+    "finished_at"
+  ],
+  "title": "Result",
+  "type": "object"
+}

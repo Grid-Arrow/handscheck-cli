@@ -1,0 +1,4 @@
+# The fix user (M6, approved fixes only): root sudo, like the user we ask customers to create for fixes. The
+# guard is elsewhere: its key is the organization's remediate key (from= the workers), released only inside an
+# approved remediate job, and the worker's PlanPolicy lets through only that fix's own commands.
+handscheck-fix ALL=(ALL) NOPASSWD: ALL

@@ -1,0 +1,43 @@
+{
+  "contract_version": 1,
+  "job_id": "01JC0EXAMPLE0000000000JOB6",
+  "task_id": "16",
+  "kind": "explain",
+  "options": {
+    "use_claude": true,
+    "claude_budget_usd": 0.25,
+    "baseline_review": true,
+    "verify": false
+  },
+  "explain": {
+    "message_id": "16",
+    "heading": "New problems",
+    "issues": [
+      {
+        "issue_id": "3",
+        "kind": "silent_worker",
+        "scope": "worker:1",
+        "title": "Worker nyc3-1 has been silent since 2026-11-13T02:10:00Z",
+        "detail": {
+          "version": "0.1.0"
+        },
+        "first_seen_at": "2026-11-13T02:30:00Z",
+        "last_seen_at": "2026-11-13T02:30:00Z"
+      },
+      {
+        "issue_id": "4",
+        "kind": "stuck_jobs",
+        "scope": "global",
+        "title": "3 scan jobs waiting for a worker for over 60 minutes",
+        "detail": {
+          "job_ids": [
+            "01JC0EXAMPLE0000000000JOB7"
+          ]
+        },
+        "first_seen_at": "2026-11-13T02:30:00Z",
+        "last_seen_at": "2026-11-13T02:30:00Z"
+      }
+    ]
+  },
+  "deadline": "2026-11-13T08:00:00Z"
+}

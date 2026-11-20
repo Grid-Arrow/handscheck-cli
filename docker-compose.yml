@@ -1,0 +1,105 @@
+# handscheck CLI: development in Docker (nothing installed on your machine).
+#   docker compose run --rm worker hc --help
+#   docker compose up -d lab-db lab-wp1 lab-wp2 lab-locked   # synthetic target hosts (lab/README.md)
+name: handscheck-cli
+
+services:
+  worker:
+    build: ./worker
+    profiles: ["tools"]
+    volumes:
+      - .:/repo
+      - worker-venv:/venv
+      - worker-uv-cache:/uv-cache
+      - worker-state:/state
+
+  # ── Lab target hosts (synthetic) ─────────────────────────────────────────────
+  lab-db:
+    image: mysql:8.0
+    # PHP 7.0 (lab-wp2) needs mysql_native_password in the handshake and a pre-8.0 default collation.
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root-local
+    volumes:
+      - lab-db:/var/lib/mysql
+      - ./lab/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-proot-local", "--silent"]
+      interval: 5s
+      retries: 30
+
+  # Clean host: no compromise, only legitimate look-alikes (lab/fixtures/site-lookalikes). The no-false-positive
+  # baseline, incl. the 24.04 /lib ↔ /usr/lib quirk.
+  lab-wp1:
+    build:
+      context: ./lab/hosts
+      dockerfile: ubuntu-24.04/Dockerfile
+    image: handscheck-lab-ubuntu-24.04
+    hostname: lab-wp1
+    environment: &lab-env
+      LAB_HOST: lab-wp1
+      LAB_SITES: alpha.lab.test beta.lab.test
+      LAB_DB_HOST: lab-db
+      LAB_DB_USER: wp
+      LAB_DB_PASSWORD: lab-only-password
+      LAB_FIXTURES: site-lookalikes
+    volumes:
+      - ./.local/keys:/lab-keys:ro
+      - ./lab/fixtures:/lab-fixtures:ro
+      - lab-wp1-www:/var/www
+    ports:
+      - "127.0.0.1:2221:22"
+      - "127.0.0.1:8081:80"
+    depends_on:
+      lab-db: { condition: service_healthy }
+
+  # Compromised host: lab/fixtures/host-compromise (uid-0 user, fake systemd unit, www-data cron, /dev/shm file)
+  # and site-compromise (shells, plugin backdoor, prepend, rogue admins, dump, listing, phpinfo) on gamma.
+  lab-wp2:
+    build:
+      context: ./lab/hosts
+      dockerfile: ubuntu-16.04/Dockerfile
+    image: handscheck-lab-ubuntu-16.04
+    hostname: lab-wp2
+    environment:
+      <<: *lab-env
+      LAB_HOST: lab-wp2
+      LAB_SITES: gamma.lab.test delta.lab.test
+      LAB_FIXTURES: host-compromise site-compromise
+    volumes:
+      - ./.local/keys:/lab-keys:ro
+      - ./lab/fixtures:/lab-fixtures:ro
+      - lab-wp2-www:/var/www
+    ports:
+      - "127.0.0.1:2222:22"
+      - "127.0.0.1:8082:80"
+    depends_on:
+      lab-db: { condition: service_healthy }
+
+  # Locked-out host: `chmod 000 /usr/bin/sudo` (lab/fixtures/sudo-lockout). No sites, so no database.
+  lab-locked:
+    build:
+      context: ./lab/hosts
+      dockerfile: ubuntu-24.04/Dockerfile
+    image: handscheck-lab-ubuntu-24.04
+    hostname: lab-locked
+    environment:
+      LAB_HOST: lab-locked
+      LAB_SITES: ""
+      LAB_FIXTURES: sudo-lockout
+    volumes:
+      - ./.local/keys:/lab-keys:ro
+      - ./lab/fixtures:/lab-fixtures:ro
+    ports:
+      - "127.0.0.1:2223:22"
+
+volumes:
+  worker-venv:
+  worker-uv-cache:
+  worker-state:
+  lab-db:
+  lab-wp1-www:
+  lab-wp2-www:

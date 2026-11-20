@@ -1,0 +1,36 @@
+{
+  "contract_version": 1,
+  "job_id": "01JC0EXAMPLE0000000000JOB5",
+  "worker_version": "0.1.0",
+  "status": "ok",
+  "started_at": "2026-11-13T02:10:00Z",
+  "finished_at": "2026-11-13T02:11:30Z",
+  "findings": [
+    {
+      "dedupe_key": "investigator:ssh_login_from_unknown_ip:lab-wp2:-:203.0.113.9",
+      "agent": "investigator",
+      "agent_version": 1,
+      "site": null,
+      "severity": "high",
+      "title": "Root login from 203.0.113.9 right before sysbackup was created",
+      "summary": "auth.log shows a root SSH login from 203.0.113.9 one minute before useradd.",
+      "evidence": [
+        "Accepted publickey for root from 203.0.113.9"
+      ],
+      "rule_ids": [],
+      "recommended_action": "Block the IP and rotate root's keys.",
+      "confidence": "high",
+      "verification": {
+        "status": "pending",
+        "reason": null,
+        "verifier_version": null
+      }
+    }
+  ],
+  "investigation": {
+    "answer": "sysbackup was created by root at 02:00:41 after a root SSH login from 203.0.113.9."
+  },
+  "claude_input_tokens": 21000,
+  "claude_output_tokens": 1500,
+  "claude_cost_usd": 0.114
+}

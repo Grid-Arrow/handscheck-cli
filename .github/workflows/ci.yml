@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  worker:
+    name: Worker (Python)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: worker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --locked
+      - run: uv run ruff format --check .
+      - run: uv run ruff check .
+      - run: uv run mypy
+      - run: uv run pytest
+      - name: Contracts are fresh
+        run: uv run hc contracts export --check
+
+  lab:
+    name: Lab hosts (smoke + bundle + lab tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate a throwaway lab key
+        run: mkdir -p .local/keys && ssh-keygen -q -t ed25519 -N '' -C ci -f .local/keys/id_ed25519_lab
+      - run: docker compose up -d --build lab-wp1 lab-wp2 lab-locked
+      - run: sh lab/smoke.sh
+      - name: Self-hosted bundle on the lab hosts (install, hc check --local, uninstall)
+        run: sh lab/selfhosted.sh
+      - name: Worker against the lab hosts (pytest -m lab)
+        run: docker compose run --rm worker pytest -m lab
+      - if: failure()
+        run: docker compose logs lab-wp1 lab-wp2 lab-locked lab-db

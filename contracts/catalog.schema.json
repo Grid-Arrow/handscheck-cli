@@ -1,0 +1,94 @@
+{
+  "$defs": {
+    "AgentCatalogEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "cadence": {
+          "title": "Cadence",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "scope": {
+          "pattern": "^(host|site|org)$",
+          "title": "Scope",
+          "type": "string"
+        },
+        "settings_schema": {
+          "additionalProperties": true,
+          "title": "Settings Schema",
+          "type": "object"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "watch": {
+          "default": false,
+          "description": "Also runs in the watch pass (every 15-60 min, rules only).",
+          "title": "Watch",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "title",
+        "description",
+        "version",
+        "scope",
+        "cadence"
+      ],
+      "title": "AgentCatalogEntry",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "agents": {
+      "items": {
+        "$ref": "#/$defs/AgentCatalogEntry"
+      },
+      "title": "Agents",
+      "type": "array"
+    },
+    "contract_version": {
+      "default": 1,
+      "title": "Contract Version",
+      "type": "integer"
+    },
+    "worker_version": {
+      "title": "Worker Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "worker_version",
+    "agents"
+  ],
+  "title": "Catalog",
+  "type": "object"
+}

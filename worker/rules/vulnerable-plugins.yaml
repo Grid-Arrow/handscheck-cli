@@ -1,0 +1,15 @@
+# Example rule file. The rule set itself ships in the handscheck release bundle as data; this source repository
+# has the format and one synthetic example per file, so the loader, the rule tests and your own rules work.
+# Rule format: id, description, severity, the matcher fields below, references, and examples it must match and
+# must not match (tests/agents/test_rules.py runs them).
+# "<slug> <version>"; `affected` is comma-separated comparisons, or "*".
+rules:
+  - id: example.vuln.example-plugin
+    description: Example only. A plugin whose versions before 1.2.3 are vulnerable.
+    severity: high
+    slug: example-plugin
+    affected: ["<1.2.3"]
+    references: ["https://example.invalid/advisory"]
+    examples:
+      match: ["example-plugin 1.2.2"]
+      no_match: ["example-plugin 1.2.3", "example-plugin-pro 1.0"]

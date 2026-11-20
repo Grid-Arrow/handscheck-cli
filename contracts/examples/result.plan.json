@@ -1,0 +1,23 @@
+{
+  "contract_version": 1,
+  "job_id": "01JC0EXAMPLE0000000000JOBP",
+  "worker_version": "0.1.0",
+  "status": "ok",
+  "started_at": "2026-11-20T10:00:00Z",
+  "finished_at": "2026-11-20T10:00:04Z",
+  "plan": {
+    "summary": "A root account appeared and netcat was installed: review every site for malware in full.",
+    "items": [
+      {
+        "agent": "malware",
+        "site": null,
+        "depth": "deep",
+        "settings": {},
+        "reason": "An attacker with root may have planted code anywhere; a diff-only review would miss old files."
+      }
+    ]
+  },
+  "claude_input_tokens": 3000,
+  "claude_output_tokens": 200,
+  "claude_cost_usd": 0.004
+}

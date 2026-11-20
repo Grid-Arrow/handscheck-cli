@@ -1,0 +1,41 @@
+{
+  "contract_version": 1,
+  "job_id": "01JC0EXAMPLE0000000000JOB7",
+  "task_id": "01JC0EXAMPLE000000000TASK7",
+  "kind": "watch",
+  "host": {
+    "host_id": "3",
+    "name": "lab-wp2",
+    "address": "lab-wp2",
+    "port": 22,
+    "user": "handscheck",
+    "private_key": "EXAMPLE-NOT-A-REAL-KEY",
+    "host_key_fingerprint": "SHA256:EXAMPLEexampleEXAMPLEexampleEXAMPLEexample0"
+  },
+  "agents": [
+    {"name": "activity", "version": 2, "site": null, "settings": {}, "use_claude": true},
+    {"name": "health", "version": 1, "site": null, "settings": {}, "use_claude": true},
+    {"name": "persistence", "version": 4, "site": null, "settings": {}, "use_claude": true},
+    {"name": "users", "version": 3, "site": null, "settings": {}, "use_claude": true}
+  ],
+  "previous_snapshots": {
+    "activity": {
+      "agent_version": 2,
+      "facts": {
+        "now": 1795119000,
+        "known_ips": {"wp:labadmin": {"192.0.2.10": 1795110000}}
+      },
+      "taken_at": "2026-11-20T02:30:00Z"
+    }
+  },
+  "disabled_sites": [],
+  "open_findings": [],
+  "options": {
+    "use_claude": false,
+    "claude_budget_usd": 0.0,
+    "baseline_review": true,
+    "verify": false
+  },
+  "suppressions": [],
+  "deadline": "2026-11-20T03:30:00Z"
+}

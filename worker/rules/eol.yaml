@@ -1,0 +1,16 @@
+# Example rule file. The rule set itself ships in the handscheck release bundle as data; this source repository
+# has the format and one synthetic example per file, so the loader, the rule tests and your own rules work.
+# Rule format: id, description, severity, the matcher fields below, references, and examples it must match and
+# must not match (tests/agents/test_rules.py runs them).
+# "<product> <version> <date>" = past end of life on that date.
+rules:
+  - id: example.eol.ubuntu-12-04
+    description: Example only. Ubuntu 12.04 standard support ended 2017-04-28.
+    severity: high
+    product: ubuntu
+    version: "12.04"
+    eol: 2017-04-28
+    references: ["https://ubuntu.com/about/release-cycle"]
+    examples:
+      match: ["ubuntu 12.04 2017-04-29"]
+      no_match: ["ubuntu 12.04 2017-04-28", "ubuntu 0.0 2017-04-29"]

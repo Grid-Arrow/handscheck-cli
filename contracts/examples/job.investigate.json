@@ -1,0 +1,55 @@
+{
+  "contract_version": 1,
+  "job_id": "01JC0EXAMPLE0000000000JOB5",
+  "task_id": "15",
+  "kind": "investigate",
+  "host": {
+    "host_id": "4",
+    "name": "lab-wp2",
+    "address": "lab-wp2",
+    "port": 22,
+    "user": "handscheck",
+    "private_key": "EXAMPLE-NOT-A-REAL-KEY",
+    "host_key_fingerprint": "SHA256:EXAMPLEexampleEXAMPLEexampleEXAMPLEexample0"
+  },
+  "options": {
+    "use_claude": true,
+    "claude_budget_usd": 1.0,
+    "baseline_review": true,
+    "verify": false
+  },
+  "open_findings": [
+    {
+      "dedupe_key": "system:uid0_account:lab-wp2:-:sysbackup",
+      "agent": "system",
+      "site": null,
+      "title": "Second uid-0 account sysbackup",
+      "severity": "critical",
+      "status": "new"
+    }
+  ],
+  "investigate": {
+    "question": "When and from where was sysbackup created? Check auth.log and lastlog around 2026-11-13 02:00.",
+    "reason": "Shows how the attacker got root.",
+    "finding": {
+      "dedupe_key": "system:uid0_account:lab-wp2:-:sysbackup",
+      "host": "lab-wp2",
+      "agent": "system",
+      "site": null,
+      "severity": "critical",
+      "title": "Second uid-0 account sysbackup",
+      "first_seen_at": "2026-11-13T02:01:00Z"
+    },
+    "facts": {
+      "users": {
+        "accounts": [
+          {
+            "name": "sysbackup",
+            "uid": 0
+          }
+        ]
+      }
+    }
+  },
+  "deadline": "2026-11-13T08:00:00Z"
+}

@@ -1,0 +1,45 @@
+{
+  "contract_version": 1,
+  "job_id": "01JC0EXAMPLE0000000000JOB2",
+  "task_id": "12",
+  "kind": "verify",
+  "host": {
+    "host_id": "4",
+    "name": "lab-wp2",
+    "address": "lab-wp2",
+    "port": 22,
+    "user": "handscheck",
+    "private_key": "EXAMPLE-NOT-A-REAL-KEY",
+    "host_key_fingerprint": "SHA256:EXAMPLEexampleEXAMPLEexampleEXAMPLEexample0"
+  },
+  "options": {
+    "use_claude": true,
+    "claude_budget_usd": 1.5,
+    "baseline_review": true,
+    "verify": false
+  },
+  "verify": {
+    "findings": [
+      {
+        "finding_id": "41",
+        "dedupe_key": "system:uid0_account:lab-wp2:-:sysbackup",
+        "agent": "system",
+        "site": null,
+        "severity": "critical",
+        "title": "Second uid-0 account sysbackup",
+        "evidence": [
+          "sysbackup:x:0:0::/home/sysbackup:/bin/bash"
+        ]
+      }
+    ],
+    "facts": {
+      "system": {
+        "uid0_users": [
+          "root",
+          "sysbackup"
+        ]
+      }
+    }
+  },
+  "deadline": "2026-11-13T08:00:00Z"
+}

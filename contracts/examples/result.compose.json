@@ -1,0 +1,18 @@
+{
+  "contract_version": 1,
+  "job_id": "01JC0EXAMPLE0000000000JOB4",
+  "worker_version": "0.1.0",
+  "status": "ok",
+  "started_at": "2026-11-13T02:06:20Z",
+  "finished_at": "2026-11-13T02:06:29Z",
+  "messages": [
+    {
+      "alert_id": "7",
+      "subject": "[Critical] Hidden root account sysbackup on lab-wp2",
+      "body": "We found a second account with root rights (uid 0), `sysbackup`, on lab-wp2.\n\nWhat to do: lock the account and find out who created it."
+    }
+  ],
+  "claude_input_tokens": 1900,
+  "claude_output_tokens": 300,
+  "claude_cost_usd": 0.0136
+}

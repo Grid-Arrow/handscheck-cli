@@ -1,0 +1,83 @@
+{
+  "contract_version": 1,
+  "job_id": "01JCX7Q4R2M8E0RZ3V9T5K6A1B",
+  "worker_version": "0.1.0",
+  "status": "ok",
+  "started_at": "2026-11-19T15:04:12Z",
+  "finished_at": "2026-11-19T15:04:16Z",
+  "remediation": {
+    "status": "succeeded",
+    "message": "Applied and verified.",
+    "steps": [
+      {
+        "phase": "precheck",
+        "command": "sudo -n -- test -d /var/www/gamma.lab.test/wp-content/uploads/leads",
+        "exit_status": 0,
+        "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "duration_s": 0.05
+      },
+      {
+        "phase": "apply",
+        "command": "sudo -n -- test -f /var/www/gamma.lab.test/wp-content/uploads/leads/.htaccess",
+        "exit_status": 0,
+        "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "duration_s": 0.05
+      },
+      {
+        "phase": "apply",
+        "command": "sudo -n -- cat /var/www/gamma.lab.test/wp-content/uploads/leads/.htaccess",
+        "exit_status": 0,
+        "output_sha256": "5f1d7a9b6f6c0f3b7f9b0e5f1f2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e",
+        "duration_s": 0.05
+      },
+      {
+        "phase": "apply",
+        "command": "sudo -n -- cp -p /var/www/gamma.lab.test/wp-content/uploads/leads/.htaccess /var/www/gamma.lab.test/wp-content/uploads/leads/.htaccess.handscheck-backup",
+        "exit_status": 0,
+        "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "duration_s": 0.05
+      },
+      {
+        "phase": "apply",
+        "command": "sudo -n -- tee /var/www/gamma.lab.test/wp-content/uploads/leads/.htaccess",
+        "exit_status": 0,
+        "output_sha256": "9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b",
+        "duration_s": 0.05
+      }
+    ],
+    "baseline_before": [
+      {
+        "site": "gamma.lab.test",
+        "status": 200,
+        "error": null
+      },
+      {
+        "site": "alpha.lab.test",
+        "status": 200,
+        "error": null
+      }
+    ],
+    "baseline_after": [
+      {
+        "site": "gamma.lab.test",
+        "status": 200,
+        "error": null
+      },
+      {
+        "site": "alpha.lab.test",
+        "status": 200,
+        "error": null
+      }
+    ],
+    "problems": [],
+    "rollback_data": {
+      "existed": true,
+      "htaccess": "/var/www/gamma.lab.test/wp-content/uploads/leads/.htaccess"
+    }
+  },
+  "errors": [],
+  "host_key_fingerprint": "SHA256:Zm9vYmFyYmF6cXV4ZXhhbXBsZWZpbmdlcnByaW50",
+  "claude_input_tokens": 0,
+  "claude_output_tokens": 0,
+  "claude_cost_usd": 0.0
+}
