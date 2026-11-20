@@ -69,7 +69,8 @@ fi
 [ -x "$here/bin/hc" ] && [ -x "$here/python/bin/python3" ] && [ -f "$here/sudoers-handscheck" ] \
     || die "run install.sh from the unpacked handscheck directory (bin/, python/, sudoers-handscheck)"
 command -v visudo >/dev/null 2>&1 || die "visudo not found: install sudo first"
-version=$("$here/bin/hc" version 2>/dev/null) || die "$here/bin/hc does not run on this system"
+version=$("$here/bin/hc" version 2>/dev/null | head -n 1)
+[ -n "$version" ] || die "$here/bin/hc does not run on this system"
 
 echo "Installing $version:"
 if id "$USER_NAME" >/dev/null 2>&1; then
@@ -109,5 +110,5 @@ fi
 ln -sf "$PREFIX/bin/hc" "$LINK"
 install -m 0440 -o root -g root "$tmp" "$SUDOERS"
 
-echo "Installed $("$LINK" version). Check this server with:"
+echo "Installed $("$LINK" version | head -n 1). Check this server with:"
 echo "  sudo -u $USER_NAME hc check --local"

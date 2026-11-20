@@ -64,7 +64,7 @@ for host in lab-wp1 lab-wp2; do
         rm -rf /tmp/handscheck && cd /tmp && tar -xzf handscheck.tar.gz && rm handscheck.tar.gz
         sh /tmp/handscheck/install.sh --yes >/dev/null && rm -rf /tmp/handscheck'
     os=$(docker compose exec -T "$host" sh -c '. /etc/os-release && echo "$PRETTY_NAME"')
-    echo "ok   $host: installed with install.sh ($os, $(docker compose exec -T "$host" hc version))"
+    echo "ok   $host: installed with install.sh ($os, $(docker compose exec -T "$host" hc version | head -n 1))"
 
     state=/home/handscheck/.local/share/handscheck
     docker compose exec -T "$host" rm -rf "$state"

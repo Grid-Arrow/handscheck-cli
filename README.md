@@ -20,10 +20,14 @@ can read exactly what runs on your server.
   127.0.0.1. `--checksums` opts in to fetching WordPress.org checksums.
 
 ## Install (Ubuntu 16.04–24.04, amd64 or arm64)
-Download the release bundle for your architecture, then read `handscheck/install.sh` and
-`handscheck/sudoers-handscheck` before running:
+Download the bundle for your architecture and its `.minisig` from
+[Releases](https://github.com/Grid-Arrow/handscheck-cli/releases). Check the signature against our release key
+([`handscheck-release.pub`](handscheck-release.pub), also attached to every release) with
+[minisign](https://jedisct1.github.io/minisign/), or with `hc verify` from an installed hc. Then read
+`handscheck/install.sh` and `handscheck/sudoers-handscheck` before running:
 
 ```bash
+minisign -Vm handscheck-<version>-linux-<arch>.tar.gz -p handscheck-release.pub
 tar -xzf handscheck-<version>-linux-<arch>.tar.gz
 sudo sh handscheck/install.sh          # shows what it will do and asks first
 sudo -u handscheck hc check --local

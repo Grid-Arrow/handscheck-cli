@@ -11,7 +11,7 @@ from rich.markdown import Markdown
 from rich.markup import escape
 from rich.table import Table
 
-from handscheck import __version__
+from handscheck import __version__, release
 from handscheck.agents._framework.definition import AgentDefinitionError
 from handscheck.agents._framework.findings import SEVERITY_ORDER
 from handscheck.agents._framework.registry import all_agents, catalog
@@ -58,11 +58,48 @@ def _fail(exc: Exception, as_json: bool, code: int = 1) -> typer.Exit:
 
 @app.command()
 def version(as_json: JsonOpt = False) -> None:
-    """Print the worker version."""
+    """Print the version, the release bundle it came from (if any) and the hash of the running code."""
+    bundle = release.bundle_info()
+    code = release.code_hash()
     if as_json:
-        print(json.dumps({"version": __version__}))
-    else:
-        console.print(f"handscheck {__version__}")
+        print(json.dumps({"version": __version__, "bundle": bundle, "code_sha256": code}))
+        return
+    console.print(f"handscheck {__version__}", highlight=False)
+    if bundle:
+        source = bundle.get("source", "?")[:12]
+        console.print(
+            f"bundle: {bundle.get('version', '?')} {bundle.get('arch', '?')}, from {source}", highlight=False
+        )
+    console.print(f"code sha256: {code}", highlight=False)
+
+
+@app.command()
+def verify(
+    bundle: Annotated[Path, typer.Argument(help="A release bundle (.tar.gz) to check before installing it.")],
+    sig: Annotated[
+        Path | None, typer.Option("--sig", help="The signature file (default: BUNDLE.minisig).")
+    ] = None,
+    as_json: JsonOpt = False,
+) -> None:
+    """Check that a release bundle is signed by handscheck's release key (offline, nothing is sent)."""
+    sig_path = sig or bundle.with_name(bundle.name + ".minisig")
+    try:
+        if not bundle.is_file():
+            raise release.SignatureError(f"no such file: {bundle}")
+        if not sig_path.is_file():
+            raise release.SignatureError(f"no signature file {sig_path} (download it with the bundle)")
+        result = release.verify(bundle, sig_path.read_text())
+    except release.SignatureError as exc:
+        raise _fail(Exception(f"NOT verified: {exc}"), as_json) from exc
+    if as_json:
+        print(json.dumps({"verified": True, "key_id": result.key_id, **result.fields}))
+        return
+    f = result.fields
+    console.print(
+        f"[green]verified[/green] {bundle.name}: handscheck {f.get('version', '?')} {f.get('arch', '?')}, "
+        f"signed with key {result.key_id}, from {f.get('source', '?')[:12]}",
+        highlight=False,
+    )
 
 
 @contracts_app.command("export")

@@ -35,6 +35,7 @@ RUN set -eu; \
 
 # ── assemble on the target architecture ───────────────────────────────────────
 FROM debian:bookworm-slim AS bundle
+ARG SOURCE=unknown
 COPY --from=python /opt/handscheck /opt/handscheck
 COPY --from=wheel /out /tmp/build
 COPY packaging/selfhosted/hc /opt/handscheck/bin/hc
@@ -59,6 +60,7 @@ RUN set -eu; py=/opt/handscheck/python/bin/python3; \
     /opt/handscheck/bin/hc version; \
     version=$("$py" -I -c 'import handscheck; print(handscheck.__version__)'); \
     arch=$(dpkg --print-architecture); \
+    printf '{"version": "%s", "arch": "%s", "source": "%s"}\n' "$version" "$arch" "$SOURCE" > /opt/handscheck/RELEASE; \
     mkdir /out && tar -C /opt -czf "/out/handscheck-${version}-linux-${arch}.tar.gz" handscheck
 
 FROM scratch AS out

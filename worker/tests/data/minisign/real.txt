@@ -1,0 +1,1 @@
+a file signed by the real minisign tool

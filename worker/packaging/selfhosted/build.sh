@@ -22,7 +22,9 @@ if [ -f "$root/scripts/public/export.py" ]; then
     context=$root/.local/bundle-src/worker
 fi
 rm -f "$worker"/dist/handscheck-*-linux-"$arch".tar.gz
-docker buildx build --platform "linux/$arch" -f "$here/Dockerfile" --output "type=local,dest=$worker/dist" "$context"
+source=${SOURCE_SHA:-$(git -C "$root" rev-parse HEAD 2>/dev/null || echo unknown)}
+docker buildx build --platform "linux/$arch" -f "$here/Dockerfile" --build-arg "SOURCE=$source" \
+    --output "type=local,dest=$worker/dist" "$context"
 bundle=$(ls -1 "$worker"/dist/handscheck-*-linux-"$arch".tar.gz)
 if [ -f "$root/scripts/public/check.py" ]; then
     name=$(basename "$bundle")
